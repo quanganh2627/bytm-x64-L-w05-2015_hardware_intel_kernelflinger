@@ -36,6 +36,7 @@
 #include "lib.h"
 
 static struct RSCI_TABLE *RSCI_table = NULL;
+static struct OEM1_TABLE *OEM1_table = NULL;
 
 #define RSDT_SIG "RSDT"
 #define RSDP_SIG "RSD PTR "
@@ -137,3 +138,27 @@ enum reset_sources rsci_get_reset_source(void)
 	return get_acpi_field(RSCI, reset_source);
 }
 
+UINT16 oem1_get_ia_apps_run(void)
+{
+	return get_acpi_field(OEM1, ia_apps_run);
+}
+
+UINT8 oem1_get_ia_apps_cap(void)
+{
+	return get_acpi_field(OEM1, ia_apps_cap);
+}
+
+UINT8 oem1_get_capfreqidx(void)
+{
+	return get_acpi_field(OEM1, capfreqidx);
+}
+
+UINT16 oem1_get_ia_vbattfreqlmt(void)
+{
+	return get_acpi_field(OEM1, vbattfreqlmt);
+}
+
+UINT8 oem1_get_ia_apps_to_use(void)
+{
+	return get_acpi_field(OEM1, ia_apps_to_use);
+}
