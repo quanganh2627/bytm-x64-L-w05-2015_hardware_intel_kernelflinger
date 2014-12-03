@@ -506,11 +506,13 @@ static EFI_STATUS setup_command_line(
                 ret = EFI_OUT_OF_RESOURCES;
                 goto out;
         }
-
-        ret = prepend_command_line(&cmdline16, L"console=%s", serialport);
-        if (EFI_ERROR(ret))
-                goto out;
-
+        /* Do not uncomment below code as this will conflict with Kernel
+         * bootarg settings for serial console.Moreover tty0 is not used
+         * as console on Baytrail-M platform*/
+        /* ret = prepend_command_line(&cmdline16, L"console=%s", serialport);
+         * if (EFI_ERROR(ret))
+         *       goto out;
+         */
         /* Documentation/x86/boot.txt: "The kernel command line can be located
          * anywhere between the end of the setup heap and 0xA0000" */
         cmdline_addr = 0xA0000;
