@@ -94,6 +94,8 @@ ui_textarea_t *ui_textarea_create(UINTN line_nb, UINTN row_nb, ui_font_t *font,
 				  EFI_GRAPHICS_OUTPUT_BLT_PIXEL *color);
 EFI_STATUS ui_textarea_display_text(const ui_textline_t *text, ui_font_t *font,
 				    UINTN x, UINTN *y);
+EFI_STATUS ui_textarea_display_centered_text(const ui_textline_t *text, ui_font_t *font,
+					     UINTN *y);
 void ui_textarea_free(ui_textarea_t *textarea);
 void ui_textarea_clear(ui_textarea_t *textarea);
 void ui_textarea_set_line(ui_textarea_t *textarea, UINTN line_nb, char *str,
