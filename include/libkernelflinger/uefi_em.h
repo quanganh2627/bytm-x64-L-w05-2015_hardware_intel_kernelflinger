@@ -34,5 +34,5 @@
 BOOLEAN is_battery_below_vbattfreqlmt(void);
 BOOLEAN is_charger_plugged_in(void);
 BOOLEAN is_battery_bellow_boot_OS_threshold(void);
-
+EFI_STATUS charge_till_boot_OS_threshold(void);
 #endif	/* _UEFI_EM_H_ */

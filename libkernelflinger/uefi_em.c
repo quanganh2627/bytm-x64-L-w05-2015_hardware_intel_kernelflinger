@@ -176,3 +176,68 @@ BOOLEAN is_battery_bellow_boot_OS_threshold(void)
 
 	return value < threshold;
 }
+
+static const char *EMPTY_BATTERY_IMG_NAME = "empty_battery";
+static const char *LOW_BATTERY_IMG_NAME = "low_battery";
+static const ui_textline_t CHARGING_MSG[] = {
+	{ &COLOR_YELLOW,	"              CHARGING",			TRUE },
+	{ &COLOR_WHITE,		"",						TRUE },
+	{ &COLOR_LIGHTGRAY, 	"Waiting for the minimum battery level", 	FALSE },
+	{ &COLOR_LIGHTGRAY, 	"to enter the requested mode.", 		FALSE },
+	{ &COLOR_LIGHTRED, 	"Do not unplug the charger.", 			FALSE },
+	{ NULL, NULL, FALSE }
+};
+
+EFI_STATUS charge_till_boot_OS_threshold()
+{
+	UINTN swidth, sheight;
+	EFI_STATUS ret;
+	ui_image_t *empty, *low;
+	BOOLEAN flip = TRUE;
+	ui_font_t *font;
+	UINTN y;
+
+	if (!is_charger_plugged_in())
+		return EFI_UNSUPPORTED;
+
+	ret = ui_init(&swidth, &sheight);
+	if (EFI_ERROR(ret))
+		return ret;
+
+	empty = ui_image_get(EMPTY_BATTERY_IMG_NAME);
+	if (!empty) {
+		efi_perror(EFI_NOT_FOUND, "Unable to get '%a' image",
+			   EMPTY_BATTERY_IMG_NAME);
+		return EFI_NOT_FOUND;
+	}
+
+	low = ui_image_get(LOW_BATTERY_IMG_NAME);
+	if (!low) {
+		efi_perror(EFI_NOT_FOUND, "Unable to get '%a' image",
+			   LOW_BATTERY_IMG_NAME);
+		return EFI_NOT_FOUND;
+	}
+
+	font = ui_font_get("18x32");
+	if (!font) {
+		efi_perror(EFI_UNSUPPORTED, "Unable to load font");
+		return EFI_UNSUPPORTED;
+	}
+
+	y = (sheight / 2) + empty->height;
+	ret = ui_textarea_display_centered_text(CHARGING_MSG, font, &y);
+	if (EFI_ERROR(ret))
+		return ret;
+
+	while (is_battery_bellow_boot_OS_threshold()) {
+		ui_image_t *img = flip ? empty : low;
+		ui_image_draw(img, (swidth / 2) - (img->width / 2),
+			      (sheight / 2) - (img->height / 2));
+		pause(1);
+		if (!is_charger_plugged_in())
+			return EFI_UNSUPPORTED;
+		flip = !flip;
+	}
+
+	return EFI_SUCCESS;
+}
