@@ -48,7 +48,7 @@
 #include "power.h"
 #include "uefi_em.h"
 
-#define KERNELFLINGER_VERSION	L"kernelflinger-02.04"
+#define KERNELFLINGER_VERSION	L"kernelflinger-02.05"
 
 /* Ensure this is embedded in the EFI binary somewhere */
 static const char __attribute__((used)) magic[] = "### KERNELFLINGER ###";
@@ -521,6 +521,10 @@ static EFI_STATUS validate_bootimage(
 
         switch (boot_target) {
         case NORMAL_BOOT:
+                expected = L"/boot";
+                /* in case of multistage ota */
+                expected2 = L"/recovery";
+                break;
         case CHARGER:
                 expected = L"/boot";
                 break;
