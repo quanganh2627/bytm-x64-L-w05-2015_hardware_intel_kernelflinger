@@ -174,7 +174,7 @@ BOOLEAN is_battery_bellow_boot_OS_threshold(void)
 		}
 	}
 
-	return value < threshold;
+	return (value == 0) ? FALSE : value < threshold;
 }
 
 static const char *EMPTY_BATTERY_IMG_NAME = "empty_battery";
