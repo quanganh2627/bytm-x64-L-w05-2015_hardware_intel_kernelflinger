@@ -41,6 +41,7 @@
 
 /* length unit is MiB */
 #define MiB (1024 * 1024)
+#define GiB (1024 * MiB)
 
 struct gpt_bin_header {
 	UINT32 magic;

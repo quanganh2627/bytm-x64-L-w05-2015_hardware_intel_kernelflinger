@@ -188,6 +188,11 @@ static EFI_STATUS gpt_prepare_disk(EFI_HANDLE handle, struct gpt_disk *disk)
 	if (disk->bio->Media->RemovableMedia)
 		return EFI_NOT_FOUND;
 
+	/* WA: we expect the GPP partitions to be small and the user area data to be greater than 1GiB
+	 * This supposition is only for non logical partitions regarding the previous check */
+	if ((disk->bio->Media->LastBlock+1)*512 < GiB)
+		return EFI_NOT_FOUND;
+
 	ret = uefi_call_wrapper(BS->HandleProtocol, 3, handle, &DiskIoProtocol, (VOID *)&disk->dio);
 	if (EFI_ERROR(ret)) {
 		efi_perror(ret, "Failed to get disk io protocol");
