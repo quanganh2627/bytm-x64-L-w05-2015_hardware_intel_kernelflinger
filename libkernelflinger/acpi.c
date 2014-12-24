@@ -138,9 +138,9 @@ enum reset_sources rsci_get_reset_source(void)
 	return get_acpi_field(RSCI, reset_source);
 }
 
-UINT8 oem1_get_ia_apps_to_use(void)
+UINT16 oem1_get_ia_apps_run(void)
 {
-	return get_acpi_field(OEM1, ia_apps_to_use);
+	return get_acpi_field(OEM1, ia_apps_run);
 }
 
 UINT8 oem1_get_ia_apps_cap(void)
@@ -158,7 +158,7 @@ UINT16 oem1_get_ia_vbattfreqlmt(void)
 	return get_acpi_field(OEM1, vbattfreqlmt);
 }
 
-UINT16 oem1_get_ia_apps_run(void)
+UINT8 oem1_get_ia_apps_to_use(void)
 {
-	return get_acpi_field(OEM1, ia_apps_run);
+	return get_acpi_field(OEM1, ia_apps_to_use);
 }
