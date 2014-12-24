@@ -315,7 +315,7 @@ static EFI_STATUS fastboot_ui_menu_load(void)
 	for (i = 0; i < ARRAY_SIZE(menu_actions) ; i++) {
 		menu_actions[i].image = ui_image_get(menu_actions[i].img_name);
 		if (!menu_actions[i].image)
-			return EFI_NOT_FOUND;
+			return EFI_OUT_OF_RESOURCES;
 	}
 
 	return EFI_SUCCESS;
@@ -349,10 +349,10 @@ EFI_STATUS fastboot_ui_init(void)
 
 	droid = ui_image_get(DROID_IMG_NAME);
 	if (!droid) {
-		efi_perror(EFI_NOT_FOUND,
+		efi_perror(EFI_OUT_OF_RESOURCES,
 			   "Unable to load '%a' image",
 			   DROID_IMG_NAME);
-		return EFI_NOT_FOUND;
+		return EFI_OUT_OF_RESOURCES;
 	}
 
 	if (swidth > sheight) {	/* Landscape orientation. */

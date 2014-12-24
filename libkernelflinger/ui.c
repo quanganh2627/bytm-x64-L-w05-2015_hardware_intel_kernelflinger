@@ -71,7 +71,6 @@ static UINTN default_textarea_x;
 static UINTN default_textarea_y;
 
 static const char *VENDOR_IMG_NAME = "splash_intel";
-static const char *LOW_BATTERY_IMG_NAME = "low_battery";
 
 EFI_STATUS ui_init(UINTN *width_p, UINTN *height_p)
 {
@@ -159,9 +158,9 @@ EFI_STATUS ui_display_vendor_splash(VOID)
 	/* Vendor splash */
 	vendor = ui_image_get(VENDOR_IMG_NAME);
 	if (!vendor) {
-		efi_perror(EFI_NOT_FOUND, "Unable to get '%a' image",
+		efi_perror(EFI_UNSUPPORTED, "Unable to get '%a' image",
 			   VENDOR_IMG_NAME);
-		return EFI_NOT_FOUND;
+		return EFI_UNSUPPORTED;
 	}
 
 	margin = graphic.width * 20 / 100;
@@ -178,32 +177,6 @@ EFI_STATUS ui_display_vendor_splash(VOID)
 	}
 
 	ui_image_draw_scale(vendor, x, y , width, height);
-
-	return EFI_SUCCESS;
-}
-
-EFI_STATUS ui_display_low_battery(UINTN timeout) {
-	UINTN width, height;
-	ui_image_t *battery;
-	EFI_STATUS ret;
-
-	ret = ui_init(&width, &height);
-	if (EFI_ERROR(ret))
-		return ret;
-
-	ui_clear_screen();
-
-	battery = ui_image_get(LOW_BATTERY_IMG_NAME);
-	if (!battery) {
-		efi_perror(EFI_NOT_FOUND, "Unable to get '%a' image",
-			   LOW_BATTERY_IMG_NAME);
-		return EFI_NOT_FOUND;
-	}
-
-	ui_image_draw(battery, (graphic.width / 2) - (battery->width / 2),
-		      (graphic.height / 2) - (battery->height / 2));
-
-	pause(timeout);
 
 	return EFI_SUCCESS;
 }
