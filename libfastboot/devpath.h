@@ -2,9 +2,7 @@
  * Copyright (c) 2014, Intel Corporation
  * All rights reserved.
  *
- * Authors: Sylvain Chouleur <sylvain.chouleur@intel.com>
- *          Jeremy Compostella <jeremy.compostella@intel.com>
- *          Jocelyn Falempe <jocelyn.falempe@intel.com>
+ * Authors: Leo Sartre <leox.sartre@intel.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,48 +30,72 @@
  *
  */
 
-#ifndef _GPT_H_
-#define _GPT_H_
+#ifndef __DEVPATH_H__
+#define __DEVPATH_H__
 
 #include <efi.h>
-#include "gpt_bin.h"
 
-struct gpt_partition {
-	EFI_GUID type;
-	EFI_GUID unique;
-	UINT64 starting_lba;
-	UINT64 ending_lba;
-	union {
-		struct {
-			UINT16 reserved[3];
-			UINT16 gpt_att;
-		} __attribute__((packed)) fields;
-		UINT64 whole;
-	} attrs;
-	UINT16 name[36];                    /* UTF-16 encoded partition name */
-	/* Remainder of entry is reserved and should be 0 */
-} __attribute__((packed));
+#define PCI_DEVICE_PATH_NODE(Func, Dev)				\
+	{							\
+		{						\
+			HARDWARE_DEVICE_PATH,			\
+			HW_PCI_DP,				\
+			{					\
+				(UINT8) (sizeof (PCI_DEVICE_PATH)),	\
+				(UINT8) ((sizeof (PCI_DEVICE_PATH)) >> 8)	\
+			}	\
+		},		\
+			(Func),	\
+			(Dev)	\
+	}
 
-struct gpt_partition_interface {
-	struct gpt_partition part;
-	EFI_BLOCK_IO *bio;
-	EFI_DISK_IO *dio;
-};
+#define PNPID_DEVICE_PATH_NODE(PnpId)	\
+	{				\
+		{			\
+			ACPI_DEVICE_PATH,	\
+			ACPI_DP,		\
+			{			\
+				(UINT8) (sizeof (ACPI_HID_DEVICE_PATH)),	\
+				(UINT8) ((sizeof (ACPI_HID_DEVICE_PATH)) >> 8)	\
+			},			 			    	\
+		},								\
+		EISA_PNP_ID((PnpId)),	\
+		0			\
+	}
 
-typedef enum {
-	EMMC_USER_PART = 0x00,
-	EMMC_BOOT_PART1,
-	EMMC_BOOT_PART2,
-	EMMC_GPP_PART1 = 0x04,
-	EMMC_GPP_PART2,
-	EMMC_GPP_PART3,
-	EMMC_GPP_PART4
-} EMMC_PARTITION_CTRL;
+#define gPciRootBridge PNPID_DEVICE_PATH_NODE(0x0A03)
 
-EFI_STATUS gpt_get_partition_by_label(CHAR16 *label, struct gpt_partition_interface *gpart, EMMC_PARTITION_CTRL ctrl);
-EFI_STATUS gpt_list_partition(struct gpt_partition_interface **gpartlist, UINTN *part_count, EMMC_PARTITION_CTRL ctrl);
-EFI_STATUS gpt_create(UINTN start_lba, UINTN part_count, struct gpt_bin_part *gbp, EMMC_PARTITION_CTRL ctrl);
-EFI_STATUS gpt_refresh(void);
-EFI_STATUS gpt_get_root_disk(struct gpt_partition_interface *gpart, EMMC_PARTITION_CTRL ctrl);
+#define gEndEntire				\
+	{					\
+		END_DEVICE_PATH_TYPE,		\
+		END_ENTIRE_DEVICE_PATH_SUBTYPE,	\
+		{				\
+			END_DEVICE_PATH_LENGTH,	\
+			0			\
+		}				\
+	}
 
-#endif	/* _GPT_H_ */
+#define CONTROLLER_DEVICE_PATH_NODE(Ctrl)	\
+	{					\
+		{				\
+			HARDWARE_DEVICE_PATH,	\
+			HW_CONTROLLER_DP,	\
+			{			\
+				sizeof (CONTROLLER_DEVICE_PATH),	\
+				0      					\
+			},						\
+		},							\
+		(Ctrl)							\
+	}
+
+struct _PLATFORM_PCI_DEVICE_PATH_EMMC
+{
+	ACPI_HID_DEVICE_PATH PciRootBridge;
+	PCI_DEVICE_PATH Pci;
+	CONTROLLER_DEVICE_PATH Ctrl;
+	EFI_DEVICE_PATH End;
+} __attribute__ ((packed));
+
+typedef struct _PLATFORM_PCI_DEVICE_PATH_EMMC PLATFORM_PCI_DEVICE_PATH_EMMC;
+
+#endif /* __DEVPATH_H__ */
