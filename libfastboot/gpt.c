@@ -259,7 +259,7 @@ static EFI_STATUS gpt_cache_partition(EMMC_PARTITION_CTRL ctrl)
 	PLATFORM_PCI_DEVICE_PATH_EMMC *emmc_dev_path = &emmc_part_dev_path;
 
 	/* if  already cached, return */
-	if (sdisk.bio && sdisk.ctrl == ctrl)
+	if (sdisk.dio && sdisk.ctrl == ctrl)
 		return EFI_SUCCESS;
 
 	ret = uefi_call_wrapper(BS->LocateDevicePath, 3, &BlockIoProtocol, (EFI_DEVICE_PATH **)&emmc_dev_path, &handle);
