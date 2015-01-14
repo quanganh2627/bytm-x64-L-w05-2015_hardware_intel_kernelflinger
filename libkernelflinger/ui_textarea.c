@@ -160,9 +160,10 @@ static void ui_textarea_refresh_blt(ui_textarea_t *textarea)
 	}
 }
 
-static EFI_STATUS ui_textarea_init_from_text(ui_textarea_t *textarea,
-					     const ui_textline_t *text, ui_font_t *font)
+EFI_STATUS ui_textarea_display_text(const ui_textline_t *text, ui_font_t *font,
+				    UINTN x, UINTN *y)
 {
+	ui_textarea_t textarea;
 	EFI_STATUS ret;
 	UINTN line_nb, len, row_nb = 0;
 
@@ -173,56 +174,18 @@ static EFI_STATUS ui_textarea_init_from_text(ui_textarea_t *textarea,
 		row_nb = row_nb < len ? len : row_nb;
 	}
 
-	textarea->line_nb = line_nb;
-	textarea->row_nb = row_nb;
-	textarea->text = (ui_textline_t *)text;
-	textarea->color = NULL;
-	textarea->font = font;
-	textarea->current = -1;
+	textarea.line_nb = line_nb;
+	textarea.row_nb = row_nb;
+	textarea.text = (ui_textline_t *)text;
+	textarea.color = NULL;
+	textarea.font = font;
+	textarea.current = -1;
 
-	ret = ui_textarea_allocate_blt(textarea);
-	if (EFI_ERROR(ret))
-		return ret;
-
-	return EFI_SUCCESS;
-}
-
-
-EFI_STATUS ui_textarea_display_text(const ui_textline_t *text, ui_font_t *font,
-				    UINTN x, UINTN *y)
-{
-	ui_textarea_t textarea;
-	EFI_STATUS ret;
-
-	ret = ui_textarea_init_from_text(&textarea, text, font);
+	ret = ui_textarea_allocate_blt(&textarea);
 	if (EFI_ERROR(ret))
 		return ret;
 
 	ui_textarea_draw(&textarea, x, *y);
-
-	*y += textarea.height;
-
-	FreePool(textarea.blt);
-
-	return EFI_SUCCESS;
-}
-
-EFI_STATUS ui_textarea_display_centered_text(const ui_textline_t *text, ui_font_t *font,
-					     UINTN *y)
-{
-	ui_textarea_t textarea;
-	EFI_STATUS ret;
-	UINTN swidth, sheight;
-
-	ret = ui_init(&swidth, &sheight);
-	if (EFI_ERROR(ret))
-		return ret;
-
-	ret = ui_textarea_init_from_text(&textarea, text, font);
-	if (EFI_ERROR(ret))
-		return ret;
-
-	ui_textarea_draw(&textarea, (swidth / 2) - (textarea.width / 2), *y);
 
 	*y += textarea.height;
 

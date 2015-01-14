@@ -797,12 +797,6 @@ static VOID enter_fastboot_mode(UINT8 boot_state, VOID *bootimage)
         set_efi_variable(&fastboot_guid, BOOT_STATE_VAR, sizeof(boot_state),
                         &boot_state, FALSE, TRUE);
 
-        if (is_battery_bellow_boot_OS_threshold()
-            && EFI_ERROR(charge_till_boot_OS_threshold())) {
-                ui_display_low_battery(3);
-                halt_system();
-        }
-
         if (!bootimage) {
                 ret = android_image_load_file(g_disk_device, FASTBOOT_PATH,
                                 FALSE, &bootimage);
@@ -853,12 +847,6 @@ static VOID enter_fastboot_mode(UINT8 boot_state, VOID *bootimage)
 
         set_efi_variable(&fastboot_guid, BOOT_STATE_VAR, sizeof(boot_state),
                          &boot_state, FALSE, TRUE);
-
-        if (is_battery_bellow_boot_OS_threshold()
-            && EFI_ERROR(charge_till_boot_OS_threshold())) {
-                ui_display_low_battery(3);
-                halt_system();
-        }
 
         for (;;) {
                 efiimage = NULL;
