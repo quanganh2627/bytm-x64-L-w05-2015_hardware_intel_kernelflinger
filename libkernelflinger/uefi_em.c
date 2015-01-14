@@ -174,5 +174,5 @@ BOOLEAN is_battery_bellow_boot_OS_threshold(void)
 		}
 	}
 
-	return (value == 0) ? FALSE : value < threshold;
+	return value < threshold;
 }
