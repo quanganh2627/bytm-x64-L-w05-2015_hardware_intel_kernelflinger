@@ -46,7 +46,7 @@
 #include "ux.h"
 #include "options.h"
 #include "power.h"
-#include "uefi_em.h"
+#include "targets.h"
 
 #define KERNELFLINGER_VERSION	L"kernelflinger-02.05"
 
@@ -526,13 +526,6 @@ static enum boot_target check_charge_mode()
         return NORMAL_BOOT;
 }
 
-enum boot_target check_battery()
-{
-        if (is_battery_bellow_boot_OS_threshold())
-                return is_charger_plugged_in() ? CHARGER : POWER_OFF;
-
-        return NORMAL_BOOT;
-}
 
 /* Policy:
  * 1. Check if we had multiple watchdog reported in a short period of
@@ -588,12 +581,6 @@ static enum boot_target choose_boot_target(VOID **target_address,
                 return ret;
 
         ret = check_loader_entry_one_shot();
-        if (ret != NORMAL_BOOT)
-                return ret;
-
-        ret = check_battery();
-        if (ret == POWER_OFF)
-                ui_display_low_battery(3);
         if (ret != NORMAL_BOOT)
                 return ret;
 

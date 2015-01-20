@@ -302,10 +302,10 @@ EFI_STATUS fastboot_ui_init(void)
 
 	droid = ui_image_get(DROID_IMG_NAME);
 	if (!droid) {
-		efi_perror(EFI_NOT_FOUND,
+		efi_perror(EFI_OUT_OF_RESOURCES,
 			   "Unable to load '%a' image",
 			   DROID_IMG_NAME);
-		return EFI_NOT_FOUND;
+		return EFI_OUT_OF_RESOURCES;
 	}
 
 	if (swidth > sheight) {	/* Landscape orientation. */
